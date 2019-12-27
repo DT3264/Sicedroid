@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:xml2json/xml2json.dart';
 
 import 'package:sicedroid/Models/alumno_academico.dart';
@@ -13,38 +13,53 @@ import 'package:sicedroid/Models/materia_parcial.dart';
 import 'package:sicedroid/Models/promedio.dart';
 import 'package:sicedroid/Models/status.dart';
 
-
 class WebServiceAlumnos {
-  //var url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
-  var url = 'http://localhost:55786/SICE-NET/WS/WSAlumnos.asmx';
+  var url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
   final dioClient = Dio();
   final cookieJar = CookieJar();
+  final cacheOptions = buildCacheOptions(Duration(milliseconds: 1),
+      maxStale: Duration(days: 15), forceRefresh: true);
+
+  WebServiceAlumnos() {
+    //Delete when development done
+    /*(dioClient.httpClientAdapter as DefaultHttpClientAdapter)
+        .onHttpClientCreate = (HttpClient client) {
+      client.findProxy = (uri) {
+        //proxy all request to localhost:8888
+        return "PROXY 192.168.1.156:8888";
+      };
+    };*/
+    dioClient.interceptors.add(DioCacheManager(CacheConfig()).interceptor);
+    dioClient.interceptors.add(CookieManager(cookieJar));
+  }
 
   Future<Status> login(String user, String pass) async {
-    dioClient.interceptors.add(CookieManager(cookieJar));
+    Status status = Status.fromDynamic({'acceso': false});
     var subUrl = 'accesoLogin';
     var data = {
       'strMatricula': user,
       'strContrasenia': pass,
       'tipoUsuario': '0'
     };
-    var response = await dioClient.post('$url/$subUrl', data: data);
+    var response = Response();
+    response = await dioClient
+        .post('$url/$subUrl', data: data, options: cacheOptions)
+        .catchError((e) => response = null);
+    if (response == null) {
+      return null;
+    }
     var jsonData = response.data;
     jsonData = json.decode(jsonData['d']);
-    var jsonString = jsonData['d'];
-    Status status;
-    if (jsonString != '') {
-      jsonData = json.decode(jsonString);
+
+    if (jsonData != null) {
       status = Status.fromDynamic(jsonData);
-    } else {
-      status = Status.fromDynamic({'acceso': false});
     }
     return status;
   }
 
   Future<List<MateriaParcial>> califParciales() async {
     var subUrl = 'getCalifUnidadesByAlumno';
-    var response = await dioClient.post('$url/$subUrl');
+    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
     var responseData = response.data as String;
     //print(responseData);
     var jsonObj = getJsonFromXml(responseData);
@@ -57,14 +72,15 @@ class WebServiceAlumnos {
     if (objList != null) {
       objList.forEach((m) => materiasList.add(MateriaParcial.fromDynamic(m)));
     }
-    materiasList.sort((m1, m2)=>m1.nombre.compareTo(m2.nombre));
+    materiasList.sort((m1, m2) => m1.nombre.compareTo(m2.nombre));
     return materiasList;
   }
 
   Future<List<MateriaFinal>> califFinales() async {
     var subUrl = 'getAllCalifFinalByAlumnos';
     var data = {'bytModEducativo': '0'};
-    var response = await dioClient.post('$url/$subUrl', data: data);
+    var response =
+        await dioClient.post('$url/$subUrl', data: data, options: cacheOptions);
     var responseData = response.data.toString();
     responseData = responseData.replaceAll('{d: [', '[');
     responseData = responseData.replaceAll(']}', ']');
@@ -82,7 +98,8 @@ class WebServiceAlumnos {
   Future<Kardex> kardexConPromedio() async {
     var subUrl = 'getAllKardexConPromedioByAlumno';
     var data = {'aluLineamiento': '1'};
-    var response = await dioClient.post('$url/$subUrl', data: data);
+    var response =
+        await dioClient.post('$url/$subUrl', data: data, options: cacheOptions);
     var responseData = response.data.toString();
     responseData = responseData.replaceFirst('d', '\"d\"');
     var jsonObj = json.decode(responseData);
@@ -92,7 +109,7 @@ class WebServiceAlumnos {
 
   Future<AlumnoAcademico> getAlumnoAcademicoWithLineamiento() async {
     var subUrl = 'getAlumnoAcademicoWithLineamiento';
-    var response = await dioClient.post('$url/$subUrl');
+    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
     var jsonObj = getJsonFromXml(response.data);
     jsonObj = json.decode(jsonObj['string']['\$']);
     var alumno = AlumnoAcademico.fromDynamic(jsonObj);
@@ -101,7 +118,7 @@ class WebServiceAlumnos {
 
   Future<List<MateriaCargaAcademica>> getCargaAcademica() async {
     var subUrl = 'getCargaAcademicaByAlumno';
-    var response = await dioClient.post('$url/$subUrl');
+    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
     var jsonObj = getJsonFromXml(response.data);
     var jsonString = jsonObj['string']['\$'].toString();
     jsonString = jsonString.replaceAll('\\r\\n', '');
@@ -118,11 +135,15 @@ class WebServiceAlumnos {
 
   Future<Promedio> getPromedioDetalle() async {
     var subUrl = 'getPromedioDetalleByAlumno';
-    var response = await dioClient.post('$url/$subUrl');
+    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
     var jsonObj = getJsonFromXml(response.data);
     jsonObj = json.decode(jsonObj['string']['\$']);
     var promedio = Promedio.fromDynamic(jsonObj);
     return promedio;
+  }
+
+  void logout() {
+    DioCacheManager(CacheConfig()).clearAll();
   }
 
   dynamic getJsonFromXml(String responseData) {
