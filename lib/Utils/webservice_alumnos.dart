@@ -15,7 +15,7 @@ import 'package:sicedroid/Models/status.dart';
 
 class WebServiceAlumnos {
   //var url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
-  var url = 'http://ac32c9b9.ngrok.io/WS/WSAlumnos.asmx';
+  var url = 'http://83cccb4e.ngrok.io/WS/WSAlumnos.asmx';
   final dioClient = Dio();
   final cookieJar = CookieJar();
 
@@ -96,6 +96,7 @@ class WebServiceAlumnos {
 
   Future<Map<String, dynamic>> getMainPageData() async {
     var alumno = await getAlumnoAcademicoWithLineamiento();
+    Singleton.get().alumnoAcademico = alumno;
     var promedio = await getPromedioDetalle();
     return {"alumno": alumno, "promedio": promedio};
   }

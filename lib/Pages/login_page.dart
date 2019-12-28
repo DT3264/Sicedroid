@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sicedroid/Models/status.dart';
-import 'package:sicedroid/Pages/main_page.dart';
+import 'package:sicedroid/Routes/routes.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
 import 'package:sicedroid/Utils/strings.dart' as strings;
 import 'package:dio/dio.dart';
 
 class LoginPage extends StatefulWidget {
+  static const String routeName = '/login';
   LoginPage({Key key}) : super(key: key);
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -33,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
             sharedPrefs.containsKey(strings.clave)) {
           matricula = sharedPrefs.get(strings.matricula);
           clave = sharedPrefs.get(strings.clave);
-          print('Mat. *$matricula* - clave: *$clave*');
-          print('Autologin;');
+          //print('Autologin;');
+          //print('Mat. *$matricula* - clave: *$clave*');
           textMatriculaController.text = matricula;
           textClaveController.text = clave;
           _login();
@@ -182,8 +183,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLogingIn = false;
       });
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainPage()));
+      Navigator.pushNamed(context, Routes.main);
     } else {
       setState(() {
         isLogingIn = false;

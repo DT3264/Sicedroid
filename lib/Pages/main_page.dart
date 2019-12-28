@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sicedroid/Models/alumno_academico.dart';
 import 'package:sicedroid/Models/promedio.dart';
+import 'package:sicedroid/Routes/routes.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
+import 'package:sicedroid/Widgets/main_page_drawer.dart';
 
 class MainPage extends StatefulWidget {
+  static const String routeName = '/main';
   @override
   _MainPage createState() => _MainPage();
 }
 
 class _MainPage extends State<MainPage> {
+  
+  AlumnoAcademico alumno;
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -19,7 +24,11 @@ class _MainPage extends State<MainPage> {
       appBar: AppBar(
         title: Text('Datos académicos'),
       ),
-      drawer: Drawer(),
+      drawer: MainPageDrawer(
+        context: context,
+        alumno: alumno,
+        page: Routes.main,
+      ),
       body: FutureBuilder(
         future: Singleton.get().webServiceAlumnos.getMainPageData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -27,16 +36,18 @@ class _MainPage extends State<MainPage> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Center(
-                    child: Text(
-                  'Obteniendo datos',
-                  textAlign: TextAlign.center,
-                )),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Center(
+                      child: Text(
+                    'Obteniendo datos',
+                    textAlign: TextAlign.center,
+                  )),
+                ),
                 Center(child: CircularProgressIndicator())
               ],
             );
           } else {
-            print(snapshot.data);
             var alumno = snapshot.data['alumno'] as AlumnoAcademico;
             var promedio = snapshot.data['promedio'] as Promedio;
             return WillPopScope(
@@ -84,11 +95,8 @@ class _MainPage extends State<MainPage> {
                       child: LinearProgressIndicator(
                         value: promedio.avanceCdts / 100,
                       ),
-                      padding: EdgeInsets.fromLTRB(
-                          width * .1,
-                          0,
-                          width * .1,
-                          10),
+                      padding:
+                          EdgeInsets.fromLTRB(width * .1, 0, width * .1, 10),
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -106,12 +114,6 @@ class _MainPage extends State<MainPage> {
                     _localText('ADEUDO(S)'),
                     _localText(
                         '${alumno.adeudo ? alumno.adeudoDescripcion : "NINGUNO"}'),
-                    RaisedButton(
-                        onPressed: () {
-                          Singleton.get().webServiceAlumnos.logout();
-                          Navigator.pop(context);
-                        },
-                        child: _localText('Salir'))
                   ])),
             );
           }

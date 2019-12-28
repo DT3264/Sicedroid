@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sicedroid/Models/alumno_academico.dart';
 import 'package:sicedroid/Utils/webservice_alumnos.dart';
 
 class Singleton {
@@ -7,6 +8,7 @@ class Singleton {
 
   WebServiceAlumnos webServiceAlumnos;
   SharedPreferences sharedPrefs;
+  AlumnoAcademico alumnoAcademico;
 
   static Singleton get() {
     return _singleton;
@@ -17,5 +19,11 @@ class Singleton {
   }
   Future<void> initSharedPrefs() async{
     sharedPrefs = await SharedPreferences.getInstance();
+  }
+  Future<AlumnoAcademico> getAlumno() async{
+    if(alumnoAcademico == null){
+      alumnoAcademico = await webServiceAlumnos.getAlumnoAcademicoWithLineamiento();
+    }
+    return alumnoAcademico;
   }
 }
