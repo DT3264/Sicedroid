@@ -35,10 +35,13 @@ class AlumnoAcademico {
   @override
   String toString() {
     var s = 'Nombre: $nombre, Matricula: $matricula, Carrera: $carrera';
-    s+=', Especialidad: $especialidad, Fecha Reins: $fechaReins, ModEducativo: $modEducativo';
-    s+=', UrlFoto: $urlFoto, Adeudo: $adeudo, AdeudoDescripcion: $adeudoDescripcion';
-    s+=', Inscrito: $inscrito, Estatus: $estatus, SemActual: $semActual';
-    s+=', CdtosActuales: $cdtosActuales, CdtosAcumulados: $cdtosAcumulados, Lineamiento: $lineamiento';
+    s +=
+        ', Especialidad: $especialidad, Fecha Reins: $fechaReins, ModEducativo: $modEducativo';
+    s +=
+        ', UrlFoto: $urlFoto, Adeudo: $adeudo, AdeudoDescripcion: $adeudoDescripcion';
+    s += ', Inscrito: $inscrito, Estatus: $estatus, SemActual: $semActual';
+    s +=
+        ', CdtosActuales: $cdtosActuales, CdtosAcumulados: $cdtosAcumulados, Lineamiento: $lineamiento';
     return s;
   }
 }

@@ -1,35 +1,25 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:sicedroid/Utils/singleton.dart';
+import 'package:xml2json/xml2json.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:xml2json/xml2json.dart';
 
+import 'package:sicedroid/Models/carga_academica.dart';
+import 'package:sicedroid/Models/finales.dart';
+import 'package:sicedroid/Models/parciales.dart';
 import 'package:sicedroid/Models/alumno_academico.dart';
 import 'package:sicedroid/Models/kardex.dart';
-import 'package:sicedroid/Models/materia_carga_academica.dart';
-import 'package:sicedroid/Models/materia_final.dart';
-import 'package:sicedroid/Models/materia_parcial.dart';
 import 'package:sicedroid/Models/promedio.dart';
 import 'package:sicedroid/Models/status.dart';
 
 class WebServiceAlumnos {
-  var url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
+  //var url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
+  var url = 'http://ac32c9b9.ngrok.io/WS/WSAlumnos.asmx';
   final dioClient = Dio();
   final cookieJar = CookieJar();
-  final cacheOptions = buildCacheOptions(Duration(milliseconds: 1),
-      maxStale: Duration(days: 15), forceRefresh: true);
 
   WebServiceAlumnos() {
-    //Delete when development done
-    /*(dioClient.httpClientAdapter as DefaultHttpClientAdapter)
-        .onHttpClientCreate = (HttpClient client) {
-      client.findProxy = (uri) {
-        //proxy all request to localhost:8888
-        return "PROXY 192.168.1.156:8888";
-      };
-    };*/
-    dioClient.interceptors.add(DioCacheManager(CacheConfig()).interceptor);
     dioClient.interceptors.add(CookieManager(cookieJar));
   }
 
@@ -43,107 +33,95 @@ class WebServiceAlumnos {
     };
     var response = Response();
     response = await dioClient
-        .post('$url/$subUrl', data: data, options: cacheOptions)
+        .post('$url/$subUrl', data: data)
         .catchError((e) => response = null);
     if (response == null) {
       return null;
     }
     var jsonData = response.data;
-    jsonData = json.decode(jsonData['d']);
 
-    if (jsonData != null) {
+    if (jsonData != null || response.data['d'].toString().isNotEmpty) {
+      jsonData = json.decode(jsonData['d']);
       status = Status.fromDynamic(jsonData);
     }
     return status;
   }
 
-  Future<List<MateriaParcial>> califParciales() async {
+  Future<Parciales> califParciales() async {
     var subUrl = 'getCalifUnidadesByAlumno';
-    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
+    var response = await dioClient.post('$url/$subUrl');
     var responseData = response.data as String;
-    //print(responseData);
     var jsonObj = getJsonFromXml(responseData);
     var jsonString = jsonObj['string']['\$'].toString();
     jsonString = jsonString.replaceAll('\\r\\n', '');
     jsonObj = json.decode(jsonString);
-    var objList = jsonObj as List;
-    var materiasList = MateriaParcial.emptyList;
-    materiasList.clear();
-    if (objList != null) {
-      objList.forEach((m) => materiasList.add(MateriaParcial.fromDynamic(m)));
+    var parciales = Parciales.fromDynamic(null);
+    if (jsonObj != null) {
+      parciales = Parciales.fromDynamic(jsonObj);
     }
-    materiasList.sort((m1, m2) => m1.nombre.compareTo(m2.nombre));
-    return materiasList;
+    return parciales;
   }
 
-  Future<List<MateriaFinal>> califFinales() async {
+  Future<Finales> califFinales() async {
     var subUrl = 'getAllCalifFinalByAlumnos';
     var data = {'bytModEducativo': '0'};
-    var response =
-        await dioClient.post('$url/$subUrl', data: data, options: cacheOptions);
-    var responseData = response.data.toString();
-    responseData = responseData.replaceAll('{d: [', '[');
-    responseData = responseData.replaceAll(']}', ']');
-    var materiasList = MateriaFinal.emptyList;
-    if (!responseData.contains('d:')) {
-      var jsonObj = json.decode(responseData);
-      var objList = jsonObj as List;
-      materiasList.clear();
-      objList.forEach((m) => materiasList.add(MateriaFinal.fromDynamic(m)));
-      materiasList.sort((m1, m2) => m1.materia.compareTo(m2.materia));
+    var response = await dioClient.post('$url/$subUrl', data: data);
+    var jsonObj =
+        json.decode(response.data['d'].toString().replaceAll('\\r\\n', ''));
+    var finales = Finales.fromDynamic(null);
+    if (jsonObj != null) {
+      finales = Finales.fromDynamic(jsonObj);
     }
-    return materiasList;
+    return finales;
   }
 
   Future<Kardex> kardexConPromedio() async {
     var subUrl = 'getAllKardexConPromedioByAlumno';
     var data = {'aluLineamiento': '1'};
-    var response =
-        await dioClient.post('$url/$subUrl', data: data, options: cacheOptions);
-    var responseData = response.data.toString();
-    responseData = responseData.replaceFirst('d', '\"d\"');
-    var jsonObj = json.decode(responseData);
+    var response = await dioClient.post('$url/$subUrl', data: data);
+    var responseData = response.data;
+    var jsonObj = json.decode(responseData['d']);
     var kardex = Kardex.fromDynamic(jsonObj);
     return kardex;
   }
 
   Future<AlumnoAcademico> getAlumnoAcademicoWithLineamiento() async {
     var subUrl = 'getAlumnoAcademicoWithLineamiento';
-    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
+    var response = await dioClient.post('$url/$subUrl');
     var jsonObj = getJsonFromXml(response.data);
     jsonObj = json.decode(jsonObj['string']['\$']);
     var alumno = AlumnoAcademico.fromDynamic(jsonObj);
     return alumno;
   }
 
-  Future<List<MateriaCargaAcademica>> getCargaAcademica() async {
+  Future<Map<String, dynamic>> getMainPageData() async {
+    var alumno = await getAlumnoAcademicoWithLineamiento();
+    var promedio = await getPromedioDetalle();
+    return {"alumno": alumno, "promedio": promedio};
+  }
+
+  Future<CargaAcademica> getCargaAcademica() async {
     var subUrl = 'getCargaAcademicaByAlumno';
-    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
+    var response = await dioClient.post('$url/$subUrl');
     var jsonObj = getJsonFromXml(response.data);
     var jsonString = jsonObj['string']['\$'].toString();
     jsonString = jsonString.replaceAll('\\r\\n', '');
     jsonObj = json.decode(jsonString);
-    var objList = jsonObj as List;
-    var materiasCarga = MateriaCargaAcademica.emptyList;
-    materiasCarga.clear();
-    if (objList != null) {
-      objList.forEach(
-          (m) => materiasCarga.add(MateriaCargaAcademica.fromDynamic(m)));
-    }
-    return materiasCarga;
+    var carga = CargaAcademica.fromDynamic(jsonObj);
+    return carga;
   }
 
   Future<Promedio> getPromedioDetalle() async {
     var subUrl = 'getPromedioDetalleByAlumno';
-    var response = await dioClient.post('$url/$subUrl', options: cacheOptions);
+    var response = await dioClient.post('$url/$subUrl');
     var jsonObj = getJsonFromXml(response.data);
     jsonObj = json.decode(jsonObj['string']['\$']);
     var promedio = Promedio.fromDynamic(jsonObj);
     return promedio;
   }
 
-  void logout() {
-    DioCacheManager(CacheConfig()).clearAll();
+  void logout() async {
+    Singleton.get().sharedPrefs.clear();
   }
 
   dynamic getJsonFromXml(String responseData) {

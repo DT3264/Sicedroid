@@ -32,9 +32,9 @@ class MateriaKardex {
   String toString() {
     var s =
         'Materia: $materia, Calificación: $calif, Acreditado: $acred, Créditos: $cdts';
+    s += ', ClaveMateria: $clvMat, ClaveOficial: $clvOfiMat';
     s +=
-        ', ClaveMateria: $clvMat, ClaveOficial: $clvOfiMat';
-    s += ', S1: $s1, P1: $p1, A1: $a1, S2: $s2, P2: $p2, A2: $a2, Fecha especial: $fecEsp';
+        ', S1: $s1, P1: $p1, A1: $a1, S2: $s2, P2: $p2, A2: $a2, Fecha especial: $fecEsp';
     return s;
   }
 }

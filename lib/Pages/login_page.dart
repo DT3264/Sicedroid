@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:sicedroid/Models/status.dart';
+import 'package:sicedroid/Pages/main_page.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
 import 'package:sicedroid/Utils/strings.dart' as strings;
@@ -17,46 +16,31 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String matricula = '';
   String clave = '';
-  bool recordarUsuario = false;
   final textMatriculaNode = FocusNode();
   final textClaveFocusNode = FocusNode();
   var textMatriculaController = TextEditingController();
   var textClaveController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final storage = new FlutterSecureStorage();
   final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
+  bool isLogingIn = false;
 
   void initState() {
     super.initState();
-    KeyboardVisibilityNotification().addNewListener(
-      onChange: (bool visible) {
-        if (!visible) {
-          textMatriculaNode.unfocus();
-          textClaveFocusNode.unfocus();
-        }
-      },
-    );
     try {
-      storage.read(key: strings.matricula).then((val) {
-        if (val != null) {
-          this.matricula = val;
+      Singleton.get().initSharedPrefs().then((v) {
+        var sharedPrefs = Singleton.get().sharedPrefs;
+        if (sharedPrefs.containsKey(strings.matricula) &&
+            sharedPrefs.containsKey(strings.clave)) {
+          matricula = sharedPrefs.get(strings.matricula);
+          clave = sharedPrefs.get(strings.clave);
+          print('Mat. *$matricula* - clave: *$clave*');
+          print('Autologin;');
+          textMatriculaController.text = matricula;
+          textClaveController.text = clave;
+          _login();
         }
-        storage.read(key: strings.clave).then((val) {
-          if (val != null) {
-            this.clave = val;
-          }
-          if (matricula != null && clave != null && matricula.isNotEmpty && clave.isNotEmpty) {
-            print('mat: $matricula - clave: $clave');
-            textMatriculaController.text = matricula;
-            textClaveController.text = clave;
-            setState(() {
-              recordarUsuario = true;
-            });
-            _login();
-          }
-        });
       });
-    }on Exception catch (e, s){
+    } on Exception catch (e, s) {
       print(e);
       print(s);
     }
@@ -64,10 +48,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(key: _scaffoldkey, body: _getBody());
+    return Scaffold(key: _scaffoldkey, body: _getBody(context));
   }
 
-  Widget _getBody() {
+  Widget _getBody(BuildContext context) {
     var textMatricula = TextFormField(
       controller: textMatriculaController,
       decoration: InputDecoration(
@@ -102,18 +86,6 @@ class _LoginPageState extends State<LoginPage> {
         return null;
       },
     );
-    var checkboxMantenerSesion = CheckboxListTile(
-        title: Text('Mantener sesión'),
-        activeColor: secondaryColor,
-        //title: Text('Mantener sesión'),
-        //checkColor: Colors.white,
-        value: recordarUsuario,
-        onChanged: (b) {
-          _setRecordarUsuario(b);
-          setState(() {
-            recordarUsuario = b;
-          });
-        });
     var btnEnviar = RaisedButton(
       child: Text(
         'ENTRAR',
@@ -163,9 +135,12 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         ListTile(title: textMatricula),
+                        Divider(),
                         ListTile(title: textClave),
-                        ListTile(title: checkboxMantenerSesion),
-                        ListTile(title: btnEnviar),
+                        Divider(),
+                        isLogingIn
+                            ? CircularProgressIndicator()
+                            : ListTile(title: btnEnviar),
                       ],
                     )))
           ],
@@ -182,35 +157,39 @@ class _LoginPageState extends State<LoginPage> {
     this.clave = clave;
   }
 
-  void _setRecordarUsuario(bool recordarUsuario) {
-    this.recordarUsuario = recordarUsuario;
-  }
-
   Future<void> _login() async {
+    setState(() {
+      isLogingIn = true;
+    });
     var s = Status.fromDynamic({"acceso": false});
-    try{
-    s = await Singleton.get().webServiceAlumnos.login(matricula, clave);
-    } on DioError catch(e){
+    try {
+      s = await Singleton.get().webServiceAlumnos.login(matricula, clave);
+    } on DioError catch (e) {
       print(e);
     }
-    if(s==null){
+    if (s == null) {
+      setState(() {
+        isLogingIn = false;
+      });
       _showSnackBar('Internet no disponible, intente más tarde');
       return;
     }
     if (s.acceso) {
-      if (recordarUsuario) {
-        await storage.write(key: strings.matricula, value: matricula);
-        await storage.write(key: strings.clave, value: clave);
-      }
-      else{
-        await storage.write(key: strings.matricula, value: null);
-        await storage.write(key: strings.clave, value: null);
-      }
-      _showSnackBar('Logeado exitosamente');
+      await Singleton.get().sharedPrefs.setString(strings.matricula, matricula);
+      await Singleton.get().sharedPrefs.setString(strings.clave, clave);
+      textMatriculaController.text = '';
+      textClaveController.text = '';
+      setState(() {
+        isLogingIn = false;
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainPage()));
     } else {
+      setState(() {
+        isLogingIn = false;
+      });
       _showSnackBar('Matrícula o contraseña incorrectos');
     }
-    print(s);
   }
 
   void _showSnackBar(String message) =>

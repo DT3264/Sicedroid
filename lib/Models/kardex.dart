@@ -6,13 +6,13 @@ class Kardex{
   List<MateriaKardex> materias;
   Promedio promedio;
   
-  Kardex.fromDynamic(dynamic k){
+  Kardex.fromDynamic(dynamic jsonObj){
     materias = [];
-    var objDynamic = k['d'];
-    var kardexList = objDynamic['lstKardex'] as List;
-    kardexList.forEach((m)=>materias.add(MateriaKardex.fromDynamic(m)));
+    var kardexList = jsonObj['lstKardex'] as List;
+    kardexList.forEach((m)=>materias.add(MateriaKardex.fromDynamic
+    (m)));
     
-    var kardexMap = objDynamic['Promedio'];
+    var kardexMap = jsonObj['Promedio'];
     promedio = Promedio.fromDynamic(kardexMap);
   }
 }
