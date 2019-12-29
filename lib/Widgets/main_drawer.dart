@@ -4,12 +4,11 @@ import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
 import 'package:sicedroid/Routes/routes.dart';
 
-class MainPageDrawer extends StatelessWidget {
-  final AlumnoAcademico alumno;
+class MainDrawer extends StatelessWidget {
   final String page;
-  MainPageDrawer({BuildContext context, this.page, this.alumno});
+  MainDrawer({BuildContext context, this.page});
   @override
-  Widget build(BuildContext context, {AlumnoAcademico alumno}) {
+  Widget build(BuildContext context) {
     return Drawer(
         child: FutureBuilder(
       future: Singleton.get().getAlumno(),
@@ -35,9 +34,9 @@ class MainPageDrawer extends StatelessWidget {
             _createDrawerItem(
                 iconPath: 'Assets/calificaciones_parciales.png',
                 text: 'Calificaciones Parciales',
-                page: Routes.main, //TODO: To replace
+                page: Routes.parciales,
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Routes.main);
+                  Navigator.pushReplacementNamed(context, Routes.parciales);
                 }),
             _createDrawerItem(
                 iconPath: 'Assets/calificaciones_finales.png',

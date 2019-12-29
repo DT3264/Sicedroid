@@ -15,7 +15,7 @@ import 'package:sicedroid/Models/status.dart';
 
 class WebServiceAlumnos {
   //var url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
-  var url = 'http://83cccb4e.ngrok.io/WS/WSAlumnos.asmx';
+  var url = 'http://369df00b.ngrok.io/WS/WSAlumnos.asmx';
   final dioClient = Dio();
   final cookieJar = CookieJar();
 

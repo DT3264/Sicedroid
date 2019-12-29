@@ -6,7 +6,8 @@ import 'package:sicedroid/Models/promedio.dart';
 import 'package:sicedroid/Routes/routes.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
-import 'package:sicedroid/Widgets/main_page_drawer.dart';
+import 'package:sicedroid/Widgets/infinite_loading.dart';
+import 'package:sicedroid/Widgets/main_drawer.dart';
 
 class MainPage extends StatefulWidget {
   static const String routeName = '/main';
@@ -24,29 +25,15 @@ class _MainPage extends State<MainPage> {
       appBar: AppBar(
         title: Text('Datos académicos'),
       ),
-      drawer: MainPageDrawer(
+      drawer: MainDrawer(
         context: context,
-        alumno: alumno,
         page: Routes.main,
       ),
       body: FutureBuilder(
         future: Singleton.get().webServiceAlumnos.getMainPageData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: Center(
-                      child: Text(
-                    'Obteniendo datos',
-                    textAlign: TextAlign.center,
-                  )),
-                ),
-                Center(child: CircularProgressIndicator())
-              ],
-            );
+            return InfiniteLoading();
           } else {
             var alumno = snapshot.data['alumno'] as AlumnoAcademico;
             var promedio = snapshot.data['promedio'] as Promedio;

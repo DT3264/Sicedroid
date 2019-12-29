@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sicedroid/Pages/login_page.dart';
 import 'package:sicedroid/Pages/main_page.dart';
+import 'package:sicedroid/Pages/parciales_page.dart';
 import 'Routes/routes.dart';
 import 'Utils/theme.dart';
 
@@ -13,7 +14,8 @@ class MyApp extends StatelessWidget {
       initialRoute: Routes.login,
       routes: {
         Routes.login: (context) => LoginPage(),
-        Routes.main: (context) => MainPage()
+        Routes.main: (context) => MainPage(),
+        Routes.parciales: (context)=>ParcialesPage()
       },
       title: 'Sicedroid',
       theme:
