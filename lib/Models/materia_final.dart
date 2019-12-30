@@ -1,5 +1,4 @@
 class MateriaFinal {
-  static List<MateriaFinal> emptyList = [];
   int calif;
   String acreditado;
   String grupo;

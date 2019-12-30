@@ -1,5 +1,4 @@
 class MateriaCargaAcademica {
-  static List<MateriaCargaAcademica> emptyList = [];
   String semipresencial;
   String observaciones;
   String docente;
@@ -36,7 +35,7 @@ class MateriaCargaAcademica {
     var s =
         'Materia: $materia, Clave: $clvOficial, Grupo: $grupo, Docente: $docente, Lunes: $lunes, Martes: $martes';
     s +=
-        ', Miercoles. $miercoles, Jueves: $jueves, Viernes: $viernes, Sabado: $sabado, EstadoMateria: $estadoMateria';
+        ', Miercoles: $miercoles, Jueves: $jueves, Viernes: $viernes, Sabado: $sabado, EstadoMateria: $estadoMateria';
     s +=
         ', CreditosMateria: $creditosMateria, Semipresencial: $semipresencial, Obeservaciones: $observaciones';
     return s;

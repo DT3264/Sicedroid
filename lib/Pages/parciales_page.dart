@@ -5,6 +5,7 @@ import 'package:sicedroid/Routes/routes.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
 import 'package:sicedroid/Widgets/main_drawer.dart';
+import 'package:sicedroid/Utils/theme.dart' as theme;
 
 class ParcialesPage extends StatefulWidget {
   static const String routeName = '/parciales';
@@ -28,9 +29,10 @@ class _ParcialesPage extends State<ParcialesPage> {
           builder: (buildContext, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return InfiniteLoading();
-            } else {
-              return SingleChildScrollView(child:_getBody(snapshot.data));
+            } else if (!snapshot.hasData) {
+              return Center(child: Text('Conexión fallida, intnete más tarde'));
             }
+            return SingleChildScrollView(child: _getBody(snapshot.data));
           }),
     );
   }
@@ -41,10 +43,7 @@ class _ParcialesPage extends State<ParcialesPage> {
     parciales.parciales.forEach((p) {
       materias.add(_materiaTile(p.nombre, p.califUnidades));
     });
-    return Column(
-        children:
-            materias
-        );
+    return Column(children: materias);
   }
 
   Widget _materiaTile(String materia, List<int> calificaciones) {
@@ -109,7 +108,7 @@ class _ParcialesPage extends State<ParcialesPage> {
           ))),
           Expanded(
               child: Container(
-                  color: _getColorByCalif(calif),
+                  color: theme.getColorByCalif(calif),
                   padding: EdgeInsets.only(top: 5, bottom: 5),
                   margin: EdgeInsets.only(top: 1),
                   child: Center(
@@ -120,11 +119,5 @@ class _ParcialesPage extends State<ParcialesPage> {
         ],
       ),
     );
-  }
-
-  Color _getColorByCalif(int calif) {
-    if (calif >= 85) return Colors.green;
-    if (calif >= 70) return Colors.orange;
-    return Colors.red;
   }
 }

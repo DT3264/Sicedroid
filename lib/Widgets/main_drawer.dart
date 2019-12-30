@@ -6,7 +6,7 @@ import 'package:sicedroid/Routes/routes.dart';
 
 class MainDrawer extends StatelessWidget {
   final String page;
-  MainDrawer({BuildContext context, this.page});
+  MainDrawer({@required BuildContext context, @required this.page});
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -27,9 +27,9 @@ class MainDrawer extends StatelessWidget {
             _createDrawerItem(
                 iconPath: 'Assets/carga_academica.png',
                 text: 'Carga Académica',
-                page: Routes.main, //TODO: Replace
+                page: Routes.carga,
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Routes.main);
+                  Navigator.pushReplacementNamed(context, Routes.carga);
                 }),
             _createDrawerItem(
                 iconPath: 'Assets/calificaciones_parciales.png',
@@ -41,25 +41,48 @@ class MainDrawer extends StatelessWidget {
             _createDrawerItem(
                 iconPath: 'Assets/calificaciones_finales.png',
                 text: 'Calificaiones Finales',
-                page: Routes.main, //TODO: Replace
+                page: Routes.finales,
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Routes.main);
+                  Navigator.pushReplacementNamed(context, Routes.finales);
                 }),
             _createDrawerItem(
                 iconPath: 'Assets/kardex.png',
                 text: 'Kardex',
-                page: Routes.main, //TODO: Replace
+                page: Routes.kardex,
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, Routes.main);
+                  Navigator.pushReplacementNamed(context, Routes.kardex);
                 }),
             _createDrawerItem(
                 iconPath: 'Assets/salir.png',
                 text: 'Salir',
                 page: Routes.login,
                 onTap: () {
-                  Singleton.get().sharedPrefs.clear().then((v) {
-                    Navigator.pushReplacementNamed(context, Routes.login);
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Salir'),
+                          content: Text('¿Desea cerrar sesión?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text('Sí'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Singleton.get().sharedPrefs.clear().then((v) {
+                                  Navigator.pushReplacementNamed(
+                                      context, Routes.login);
+                                });
+                              },
+                            ),
+                            FlatButton(
+                              child: Text('No'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
                 }),
           ],
         );

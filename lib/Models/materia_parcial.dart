@@ -1,5 +1,4 @@
 class MateriaParcial {
-  static List<MateriaParcial> emptyList = [];
   List<int> califUnidades = [];
   String nombre;
   String grupo;

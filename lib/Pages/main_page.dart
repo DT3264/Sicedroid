@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:sicedroid/Models/alumno_academico.dart';
 import 'package:sicedroid/Models/promedio.dart';
 import 'package:sicedroid/Routes/routes.dart';
+import 'package:sicedroid/Utils/orientations.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
@@ -18,6 +19,12 @@ class MainPage extends StatefulWidget {
 class _MainPage extends State<MainPage> {
   
   AlumnoAcademico alumno;
+
+  @override
+  void initState() {
+    super.initState();
+    enableRotation();
+  }
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -35,6 +42,9 @@ class _MainPage extends State<MainPage> {
           if (snapshot.connectionState != ConnectionState.done) {
             return InfiniteLoading();
           } else {
+            if(!snapshot.hasData){
+              return Center(child:Text('Conexión fallida, intnete más tarde'));
+            }
             var alumno = snapshot.data['alumno'] as AlumnoAcademico;
             var promedio = snapshot.data['promedio'] as Promedio;
             return WillPopScope(

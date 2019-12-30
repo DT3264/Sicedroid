@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sicedroid/Models/status.dart';
 import 'package:sicedroid/Routes/routes.dart';
+import 'package:sicedroid/Utils/orientations.dart';
 import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
 import 'package:sicedroid/Utils/strings.dart' as strings;
@@ -27,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void initState() {
     super.initState();
+    portraitModeOnly();
     try {
       Singleton.get().initSharedPrefs().then((v) {
         var sharedPrefs = Singleton.get().sharedPrefs;
@@ -34,8 +36,6 @@ class _LoginPageState extends State<LoginPage> {
             sharedPrefs.containsKey(strings.clave)) {
           matricula = sharedPrefs.get(strings.matricula);
           clave = sharedPrefs.get(strings.clave);
-          //print('Autologin;');
-          //print('Mat. *$matricula* - clave: *$clave*');
           textMatriculaController.text = matricula;
           textClaveController.text = clave;
           _login();
@@ -53,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _getBody(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     var textMatricula = TextFormField(
       controller: textMatriculaController,
       decoration: InputDecoration(
@@ -106,46 +107,44 @@ class _LoginPageState extends State<LoginPage> {
           currentFocus.unfocus();
         }
       },
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-                child: Container(
-              height: MediaQuery.of(context).size.height * .45,
-              color: primaryColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'SICEDroid',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 48,
-                        color: Colors.white,
-                        backgroundColor: primaryColor),
-                  ),
-                ],
-              ),
-            )),
-            Container(
-                height: MediaQuery.of(context).size.height * .55,
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        ListTile(title: textMatricula),
-                        Divider(),
-                        ListTile(title: textClave),
-                        Divider(),
-                        isLogingIn
-                            ? CircularProgressIndicator()
-                            : ListTile(title: btnEnviar),
-                      ],
-                    )))
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+              child: Container(
+            height: height * .45,
+            color: primaryColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'SICEDroid',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 48,
+                      color: Colors.white,
+                      backgroundColor: primaryColor),
+                ),
+              ],
+            ),
+          )),
+          Container(
+              height: height * .55,
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ListTile(title: textMatricula),
+                      Divider(),
+                      ListTile(title: textClave),
+                      Divider(),
+                      isLogingIn
+                          ? CircularProgressIndicator()
+                          : ListTile(title: btnEnviar),
+                    ],
+                  )))
+        ],
       ),
     );
   }
