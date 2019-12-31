@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       title: 'Sicedroid',
       theme:
           ThemeData(primarySwatch: primaryColor, accentColor: secondaryColor),
-      home: LoginPage(),
     );
   }
 }

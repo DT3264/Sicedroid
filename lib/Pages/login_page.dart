@@ -9,7 +9,7 @@ import 'package:sicedroid/Utils/strings.dart' as strings;
 import 'package:dio/dio.dart';
 
 class LoginPage extends StatefulWidget {
-  static const String routeName = '/login';
+  static const String routeName = '/';
   LoginPage({Key key}) : super(key: key);
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -49,7 +49,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(key: _scaffoldkey, body: _getBody(context));
+    return Scaffold(
+        key: _scaffoldkey,
+        body: SingleChildScrollView(child: _getBody(context)));
   }
 
   Widget _getBody(BuildContext context) {
