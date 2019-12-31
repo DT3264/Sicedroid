@@ -59,7 +59,7 @@ class MainDrawer extends StatelessWidget {
                 onTap: () {
                   showDialog(
                       context: context,
-                      builder: (context) {
+                      builder: (localContext) {
                         return AlertDialog(
                           title: Text('Salir'),
                           content: Text('¿Desea cerrar sesión?'),
@@ -67,17 +67,17 @@ class MainDrawer extends StatelessWidget {
                             FlatButton(
                               child: Text('Sí'),
                               onPressed: () {
-                                Navigator.of(context).pop();
                                 Singleton.get().sharedPrefs.clear().then((v) {
-                                  Navigator.pushReplacementNamed(
-                                      context, Routes.login);
+                                  Navigator.popUntil(context, (route) {
+                                    return route.isFirst;
+                                  });
                                 });
                               },
                             ),
                             FlatButton(
                               child: Text('No'),
                               onPressed: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(localContext).pop();
                               },
                             )
                           ],
