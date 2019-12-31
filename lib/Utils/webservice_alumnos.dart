@@ -14,8 +14,7 @@ import 'package:sicedroid/Models/promedio.dart';
 import 'package:sicedroid/Models/status.dart';
 
 class WebServiceAlumnos {
-  //var _url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
-  var _url = 'http://6db0a5dc.ngrok.io/WS/WSAlumnos.asmx';
+  var _url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
   final _dioClient = Dio();
   final _cookieJar = CookieJar();
 
