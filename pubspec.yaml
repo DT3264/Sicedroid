@@ -29,6 +29,7 @@ dependencies:
   shared_preferences: ^0.5.6
   configurable_expansion_tile: ^1.0.0
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,7 +46,5 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - Assets/
-  #  - images/a_dot_ham.jpe
