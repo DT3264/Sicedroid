@@ -3,6 +3,7 @@ import 'package:sicedroid/Models/finales.dart';
 import 'package:sicedroid/Models/materia_final.dart';
 import 'package:sicedroid/Routes/routes.dart';
 import 'package:sicedroid/Utils/singleton.dart';
+import 'package:sicedroid/Widgets/back_button_handler.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
 import 'package:sicedroid/Widgets/main_drawer.dart';
 import 'package:sicedroid/Utils/theme.dart' as theme;
@@ -24,17 +25,19 @@ class _FinalesPageState extends State<FinalesPage> {
         context: context,
         page: Routes.finales,
       ),
-      body: FutureBuilder(
-        future: Singleton.get().webServiceAlumnos.califFinales(),
-        builder: (buildContext, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return InfiniteLoading();
-          } else if (!snapshot.hasData) {
-            return Center(child: Text('Conexión fallida, intnete más tarde'));
-          }
-          return SingleChildScrollView(child: _getTable(snapshot.data));
-        },
-      ),
+      body: BackButtonHandler(context,
+          child: FutureBuilder(
+            future: Singleton.get().webServiceAlumnos.califFinales(),
+            builder: (buildContext, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return InfiniteLoading();
+              } else if (!snapshot.hasData) {
+                return Center(
+                    child: Text('Conexión fallida, intnete más tarde'));
+              }
+              return SingleChildScrollView(child: _getTable(snapshot.data));
+            },
+          )),
     );
   }
 
