@@ -14,6 +14,10 @@ class MateriaCargaAcademica {
   String materia;
   String grupo;
 
+  String aulaDiaActual;//Contiene el aula del día actual
+  String horaDiaActual;//Contiene la hora del día actual 
+  //provista en CargaAcademica->getMateriasDelDia()
+
   MateriaCargaAcademica.fromDynamic(dynamic c) {
     semipresencial = c['Semipresencial'];
     observaciones = c['Observaciones'];
