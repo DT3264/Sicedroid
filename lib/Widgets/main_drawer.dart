@@ -18,42 +18,42 @@ class MainDrawer extends StatelessWidget {
           children: <Widget>[
             _createHeader(snapshot.data),
             _createDrawerItem(
-                iconPath: 'Assets/datos_academicos.png',
+                iconPath: 'assets/datos_academicos.png',
                 text: 'Datos Académicos',
                 page: Routes.main,
                 onTap: () {
                   Navigator.pushReplacementNamed(context, Routes.main);
                 }),
             _createDrawerItem(
-                iconPath: 'Assets/carga_academica.png',
+                iconPath: 'assets/carga_academica.png',
                 text: 'Carga Académica',
                 page: Routes.carga,
                 onTap: () {
                   Navigator.pushReplacementNamed(context, Routes.carga);
                 }),
             _createDrawerItem(
-                iconPath: 'Assets/calificaciones_parciales.png',
+                iconPath: 'assets/calificaciones_parciales.png',
                 text: 'Calificaciones Parciales',
                 page: Routes.parciales,
                 onTap: () {
                   Navigator.pushReplacementNamed(context, Routes.parciales);
                 }),
             _createDrawerItem(
-                iconPath: 'Assets/calificaciones_finales.png',
+                iconPath: 'assets/calificaciones_finales.png',
                 text: 'Calificaiones Finales',
                 page: Routes.finales,
                 onTap: () {
                   Navigator.pushReplacementNamed(context, Routes.finales);
                 }),
             _createDrawerItem(
-                iconPath: 'Assets/kardex.png',
+                iconPath: 'assets/kardex.png',
                 text: 'Kardex',
                 page: Routes.kardex,
                 onTap: () {
                   Navigator.pushReplacementNamed(context, Routes.kardex);
                 }),
             _createDrawerItem(
-                iconPath: 'Assets/salir.png',
+                iconPath: 'assets/salir.png',
                 text: 'Salir',
                 page: Routes.login,
                 onTap: () {
@@ -94,7 +94,7 @@ class MainDrawer extends StatelessWidget {
     return UserAccountsDrawerHeader(
       margin: EdgeInsets.zero,
       decoration: BoxDecoration(color: primaryColor),
-      currentAccountPicture: Image.asset('Assets/logo_itsur.png'),
+      currentAccountPicture: Image.asset('assets/logo_itsur.png'),
       accountName: Text(alumno != null ? alumno.nombre : ''),
       accountEmail: Text(alumno != null ? alumno.carrera : ''),
     );
