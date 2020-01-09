@@ -36,7 +36,7 @@ class _ParcialesPage extends State<ParcialesPage> {
                 return Center(
                     child: Text('Conexión fallida, intnete más tarde'));
               }
-              return SingleChildScrollView(child: _getBody(snapshot.data));
+              return _getBody(snapshot.data);
             }),
       ),
     );
@@ -48,7 +48,11 @@ class _ParcialesPage extends State<ParcialesPage> {
     parciales.parciales.forEach((p) {
       materias.add(_materiaTile(p.nombre, p.califUnidades));
     });
-    return Column(children: materias);
+    return materias.length > 0
+        ? SingleChildScrollView(child: Column(children: materias))
+        : Center(
+            child: Text('Sin datos aún'),
+          );
   }
 
   Widget _materiaTile(String materia, List<int> calificaciones) {
