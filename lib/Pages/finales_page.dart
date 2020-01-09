@@ -35,7 +35,7 @@ class _FinalesPageState extends State<FinalesPage> {
                 return Center(
                     child: Text('Conexión fallida, intnete más tarde'));
               }
-              return SingleChildScrollView(child: _getTable(snapshot.data));
+              return _getTable(snapshot.data);
             },
           )),
     );
@@ -52,19 +52,25 @@ class _FinalesPageState extends State<FinalesPage> {
     finales.finales.sort((m1, m2) => m1.grupo.compareTo(m2.grupo));
     finales.finales.forEach((m) => tableRows.add(_materiaColumn(materia: m)));
     //Entre los width-s del margen y las columnas, el acumulado es 1
-    return Container(
-      margin: EdgeInsets.only(left: width * .01, right: width * .01, top: 10),
-      child: Table(
-        columnWidths: {
-          0: FixedColumnWidth(width * .48),
-          1: FixedColumnWidth(width * .25),
-          2: FixedColumnWidth(width * .25),
-        },
-        children: tableRows,
-        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-        border: TableBorder.all(color: Colors.green[600]),
-      ),
-    );
+    return finales.finales.length > 0
+        ? SingleChildScrollView(
+            child: Container(
+            margin: EdgeInsets.only(
+                left: width * .01, right: width * .01, top: 10, bottom: 5),
+            child: Table(
+              columnWidths: {
+                0: FixedColumnWidth(width * .48),
+                1: FixedColumnWidth(width * .25),
+                2: FixedColumnWidth(width * .25),
+              },
+              children: tableRows,
+              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              border: TableBorder.all(color: Colors.green[600]),
+            ),
+          ))
+        : Center(
+            child: Text('Sin datos aún'),
+          );
   }
 
   Widget _headerColumn(String text) {
