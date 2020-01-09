@@ -17,7 +17,6 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPage extends State<MainPage> {
-  
   AlumnoAcademico alumno;
 
   @override
@@ -25,6 +24,7 @@ class _MainPage extends State<MainPage> {
     super.initState();
     enableRotation();
   }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -42,8 +42,8 @@ class _MainPage extends State<MainPage> {
           if (snapshot.connectionState != ConnectionState.done) {
             return InfiniteLoading();
           } else {
-            if(!snapshot.hasData){
-              return Center(child:Text('Conexión fallida, intnete más tarde'));
+            if (!snapshot.hasData) {
+              return Center(child: Text('Conexión fallida, intnete más tarde'));
             }
             var alumno = snapshot.data['alumno'] as AlumnoAcademico;
             var promedio = snapshot.data['promedio'] as Promedio;
@@ -66,7 +66,8 @@ class _MainPage extends State<MainPage> {
                     ),
                     _localText('${alumno.matricula}'),
                     _localText('${alumno.carrera}'),
-                    _localText('Especialidad: ${alumno.especialidad}'),
+                    _localText('Especialidad: '),
+                    _localText('${alumno.especialidad}'),
                     _localText('${alumno.nombre}'),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -125,6 +126,7 @@ class _MainPage extends State<MainPage> {
         child: Text(
           text,
           style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
         ));
   }
 }
