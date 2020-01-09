@@ -65,11 +65,13 @@ class WebServiceAlumnos {
     var subUrl = 'getAllCalifFinalByAlumnos';
     var data = {'bytModEducativo': '0'};
     var response = await _dioClient.post('$_url/$subUrl', data: data);
-    var jsonObj =
-        json.decode(response.data['d'].toString().replaceAll('\\r\\n', ''));
     var finales = Finales.fromDynamic(null);
-    if (jsonObj != null) {
-      finales = Finales.fromDynamic(jsonObj);
+    if ((response.data['d'] as String).isNotEmpty) {
+      var jsonObj =
+          json.decode(response.data['d'].toString().replaceAll('\\r\\n', ''));
+      if (jsonObj != null) {
+        finales = Finales.fromDynamic(jsonObj);
+      }
     }
     return finales;
   }
