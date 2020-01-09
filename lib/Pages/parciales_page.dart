@@ -7,6 +7,7 @@ import 'package:sicedroid/Widgets/back_button_handler.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
 import 'package:sicedroid/Widgets/main_drawer.dart';
 import 'package:sicedroid/Utils/theme.dart' as theme;
+import 'package:sicedroid/Utils/strings.dart' as strings;
 
 class ParcialesPage extends StatefulWidget {
   static const String routeName = '/parciales';
@@ -34,7 +35,7 @@ class _ParcialesPage extends State<ParcialesPage> {
                 return InfiniteLoading();
               } else if (!snapshot.hasData) {
                 return Center(
-                    child: Text('Conexión fallida, intnete más tarde'));
+                    child: Text(strings.sinInternet));
               }
               return _getBody(snapshot.data);
             }),

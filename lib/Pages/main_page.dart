@@ -9,6 +9,7 @@ import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Utils/theme.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
 import 'package:sicedroid/Widgets/main_drawer.dart';
+import 'package:sicedroid/Utils/strings.dart' as strings;
 
 class MainPage extends StatefulWidget {
   static const String routeName = '/main';
@@ -43,7 +44,7 @@ class _MainPage extends State<MainPage> {
             return InfiniteLoading();
           } else {
             if (!snapshot.hasData) {
-              return Center(child: Text('Conexión fallida, intnete más tarde'));
+              return Center(child: Text(strings.sinInternet));
             }
             var alumno = snapshot.data['alumno'] as AlumnoAcademico;
             var promedio = snapshot.data['promedio'] as Promedio;

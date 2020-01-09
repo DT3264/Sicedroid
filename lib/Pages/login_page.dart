@@ -173,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLogingIn = false;
       });
-      _showSnackBar('Internet no disponible, intente más tarde');
+      _showSnackBar(strings.sinInternet);
       return;
     }
     if (s.acceso) {

@@ -6,6 +6,7 @@ import 'package:sicedroid/Utils/singleton.dart';
 import 'package:sicedroid/Widgets/back_button_handler.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
 import 'package:sicedroid/Widgets/main_drawer.dart';
+import 'package:sicedroid/Utils/strings.dart' as strings;
 
 class CargaPage extends StatefulWidget {
   static const String routeName = '/carga';
@@ -48,7 +49,7 @@ class _CargaPageState extends State<CargaPage> {
                 return InfiniteLoading();
               } else if (!snapshot.hasData) {
                 return Center(
-                    child: Text('Conexión fallida, intnete más tarde'));
+                    child: Text(strings.sinInternet));
               }
               return TabBarView(
                 children: <Widget>[

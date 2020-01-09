@@ -7,6 +7,7 @@ import 'package:sicedroid/Widgets/back_button_handler.dart';
 import 'package:sicedroid/Widgets/infinite_loading.dart';
 import 'package:sicedroid/Widgets/main_drawer.dart';
 import 'package:sicedroid/Utils/theme.dart' as theme;
+import 'package:sicedroid/Utils/strings.dart' as strings;
 
 class KardexPage extends StatefulWidget {
   static const String routeName = '/kardex';
@@ -33,7 +34,7 @@ class _KardexPageState extends State<KardexPage> {
                 return InfiniteLoading();
               } else if (!snapshot.hasData) {
                 return Center(
-                    child: Text('Conexión fallida, intnete más tarde'));
+                    child: Text(strings.sinInternet));
               }
               return _getTable(snapshot.data);
             },
