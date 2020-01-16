@@ -184,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         isLogingIn = false;
       });
-      Navigator.pushNamed(context, Routes.main);
+      Navigator.pushReplacementNamed(context, Routes.main);
     } else {
       setState(() {
         isLogingIn = false;
