@@ -14,7 +14,7 @@ import 'package:sicedroid/Models/promedio.dart';
 import 'package:sicedroid/Models/status.dart';
 
 class WebServiceAlumnos {
-  var _url = 'http://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
+  var _url = 'https://sicenet.itsur.edu.mx/WS/WSAlumnos.asmx';
   final _dioClient = Dio();
   final _cookieJar = CookieJar();
 
@@ -30,7 +30,17 @@ class WebServiceAlumnos {
       'strContrasenia': pass,
       'tipoUsuario': '0'
     };
-    var response = Response();
+    var fullUrl = '$_url/$subUrl';
+    var response;
+    //Petición inicial para obtener una cookie válida
+    response = await _dioClient
+        .get(fullUrl + '?strMatricula=$user&strContrasenia=$pass&tipoUsuario=0')
+        .catchError((e) => response = null);
+    //Ahora con la cookie, podemos hacer peticiones
+    response = await _dioClient
+        .post(fullUrl, data: data)
+        .catchError((e) => response = null);
+    response = Response();
     response = await _dioClient
         .post('$_url/$subUrl', data: data)
         .catchError((e) => response = null);
